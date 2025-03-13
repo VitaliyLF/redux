@@ -1,0 +1,46 @@
+{
+  "name": "next-scss-starter-kit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "npm run lint && npm run format && npm run svgo && next build",
+    "start": "next start",
+    "lint": "next lint  && npm run stylelint",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
+    "svgo": "svgo -f src/shared/components/icons",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
+    "stylelint": "stylelint \"src/**/*.{scss,sass}\" --fix",
+    "analyze": "cross-env ANALYZE=true next build"
+  },
+  "dependencies": {
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.20.0",
+    "@next/eslint-plugin-next": "^15.1.7",
+    "@svgr/webpack": "^8.1.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/webpack-bundle-analyzer": "^4.7.0",
+    "classnames": "^2.5.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "15.1.6",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.4",
+    "prettier": "^3.5.1",
+    "sass": "^1.85.0",
+    "stylelint": "^16.14.1",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-standard-scss": "^14.0.0",
+    "typescript": "^5",
+    "webpack-bundle-analyzer": "^4.10.2"
+  }
+}

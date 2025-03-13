@@ -1,0 +1,20 @@
+# Project Overview
+
+- Project concept:
+
+# PERSONALITY
+
+- Editor's Character:
+
+# TECHNICAL STACK
+
+- NEXT JS
+- TYPESCRIPT
+
+# Our .env variables
+
+visa/.env
+
+# Current file structure
+
+tree -I "node_modules|dist|\.sanity|\.next" | sed -E 's/├── /- /g; s/└── /- /g; s/│/ |/g; s/`--/-/g' > structure.md
