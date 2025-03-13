@@ -1,12 +1,27 @@
 .hero {
-  &__icon {
-    color: red;
-    width: 20px;
-    height: 20px;
-    transition: color 0.3s ease-in-out;
+  &__counter {
+    padding: 10px 20px;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    text-align: center;
+    border: 1px solid black;
+  }
 
-    @include hover {
-      color: currentcolor;
-    }
+  &__btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__btn {
+    display: inline;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #138d13;
+    margin-right: 20px;
+    min-width: 80px;
   }
 }
