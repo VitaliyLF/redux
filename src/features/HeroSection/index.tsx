@@ -5,6 +5,7 @@ import { useEffect, useReducer } from 'react'
 import Container from '@/shared/components/layout/Container'
 import { DecrementAction, IncrementAction, store } from '@/shared/store/counter'
 
+import Counter from '../Counters'
 import styles from './HeroSection.module.scss'
 import { IHeroSectionProps } from './type'
 import classNames from 'classnames/bind'
@@ -47,6 +48,9 @@ const HeroSection = ({ className }: IHeroSectionProps) => {
             decrement
           </button>
         </div>
+
+        <Counter counterId="first" />
+        <Counter counterId="second" />
       </Container>
     </section>
   )
