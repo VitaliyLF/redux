@@ -1,7 +1,29 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, createSelector } from '@reduxjs/toolkit'
 
 import { useDispatch, useSelector, useStore } from 'react-redux'
 
+// store для userLIst
+export type UserId = string
+
+export type User = {
+  id: UserId
+  name: string
+  description: string
+}
+
+const users: User[] = Array.from({ length: 3000 }, (_, index) => ({
+  id: `user${index + 11}`,
+  name: `User ${index + 11}`,
+  description: `Description ${index + 11}`,
+}))
+
+type UserState = {
+  entities: Record<UserId, User>
+  ids: UserId[]
+  selectedUserId: UserId | undefined
+}
+
+// --------------------------------------------
 type CounterState = {
   counter: number
 }
@@ -11,6 +33,27 @@ export type CounterId = string
 type State = {
   // теперь у нас много счетчиков и по id каунтера у нас записан state в котором есть поле counter
   counters: Record<CounterId, CounterState | undefined>
+  // Добавляем в главный стейт юзеров
+  users: UserState
+}
+
+// создаем экшены для Users
+export type UserSelectedAction = {
+  type: 'userSelected'
+  payload: {
+    userId: UserId
+  }
+}
+
+export type UserRemoveSelectedAction = {
+  type: 'userRemoveSelected'
+}
+
+export type UsersStoredAction = {
+  type: 'usersStored'
+  payload: {
+    users: User[]
+  }
 }
 
 export type IncrementAction = {
@@ -30,13 +73,27 @@ export type DecrementAction = {
   }
 }
 
-type Action = IncrementAction | DecrementAction
+type Action =
+  | IncrementAction
+  | DecrementAction
+  | UserSelectedAction
+  | UserRemoveSelectedAction
+  | UsersStoredAction
+
+// создаем дефолтное состояние для Users
+const initialUserState: UserState = {
+  entities: {},
+  ids: [],
+  selectedUserId: undefined,
+}
 
 // создаем дефолтное состояние для каунтера
 const initialCounterState: CounterState = { counter: 0 }
+
 // создаем дефолтное состояние
 const initialState: State = {
   counters: {},
+  users: initialUserState,
 }
 
 // когда мы делаем изменения каунтера какие объекты у нас меняются ?
@@ -87,6 +144,60 @@ const reducer = (state = initialState, action: Action): State => {
       }
     }
 
+    case 'usersStored': {
+      const { users } = action.payload
+
+      return {
+        // Записываем пред значение которое было в сторе
+        ...state,
+        // меняем users
+        users: {
+          // записываем пред значение users которое было в сторе
+          ...state.users,
+          // меняем поля entities
+          entities: users.reduce(
+            (acc, user) => {
+              acc[user.id] = user
+              return acc
+            },
+            {} as Record<UserId, User>,
+          ),
+          // прлучаем массив id
+          ids: users.map((user) => user.id),
+        },
+      }
+    }
+
+    case 'userSelected': {
+      const { userId } = action.payload
+
+      return {
+        // Записываем пред значение которое было в сторе
+        ...state,
+        // меняем users
+        users: {
+          // записываем пред значение users которое было в сторе
+          ...state.users,
+          // меняем поле selectedUserId
+          selectedUserId: userId,
+        },
+      }
+    }
+
+    case 'userRemoveSelected': {
+      return {
+        // Записываем пред значение которое было в сторе
+        ...state,
+        // меняем users
+        users: {
+          // записываем пред значение users которое было в сторе
+          ...state.users,
+          // меняем поле selectedUserId
+          selectedUserId: undefined,
+        },
+      }
+    }
+
     default:
       return state
   }
@@ -95,6 +206,8 @@ const reducer = (state = initialState, action: Action): State => {
 export const store = configureStore({
   reducer: reducer,
 })
+
+store.dispatch({ type: 'usersStored', payload: { users } } satisfies UsersStoredAction)
 
 // Выносим селектор в отдельную функцию тут в сторе а не в компоненте
 export const selectorCounter = (state: AppState, counterId: CounterId) => state.counters[counterId]
@@ -112,3 +225,6 @@ export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
 
 // Типизиру хук useStore
 export const useAppStore = useStore.withTypes<typeof store>()
+
+// Делаем оптимизацию через createSelector
+export const createAppSelector = createSelector.withTypes<AppState>()

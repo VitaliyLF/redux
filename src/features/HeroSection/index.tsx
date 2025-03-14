@@ -6,6 +6,7 @@ import Container from '@/shared/components/layout/Container'
 import { DecrementAction, IncrementAction, store } from '@/shared/store/counter'
 
 import Counter from '../Counters'
+import UsersList from '../UsersList'
 import styles from './HeroSection.module.scss'
 import { IHeroSectionProps } from './type'
 import classNames from 'classnames/bind'
@@ -51,6 +52,8 @@ const HeroSection = ({ className }: IHeroSectionProps) => {
 
         <Counter counterId="first" />
         <Counter counterId="second" />
+
+        <UsersList />
       </Container>
     </section>
   )
