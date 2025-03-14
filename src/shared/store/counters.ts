@@ -1,4 +1,4 @@
-import { configureStore, createSelector } from '@reduxjs/toolkit'
+import { combineReducers, configureStore, createSelector } from '@reduxjs/toolkit'
 
 import { useDispatch, useSelector, useStore } from 'react-redux'
 
@@ -28,14 +28,9 @@ type CounterState = {
   counter: number
 }
 
-export type CounterId = string
+type CountersState = Record<CounterId, CounterState | undefined>
 
-type State = {
-  // теперь у нас много счетчиков и по id каунтера у нас записан state в котором есть поле counter
-  counters: Record<CounterId, CounterState | undefined>
-  // Добавляем в главный стейт юзеров
-  users: UserState
-}
+export type CounterId = string
 
 // создаем экшены для Users
 export type UserSelectedAction = {
@@ -90,81 +85,26 @@ const initialUserState: UserState = {
 // создаем дефолтное состояние для каунтера
 const initialCounterState: CounterState = { counter: 0 }
 
-// создаем дефолтное состояние
-const initialState: State = {
-  counters: {},
-  users: initialUserState,
-}
+const initialCountersState: CountersState = {}
 
-// когда мы делаем изменения каунтера какие объекты у нас меняются ?
-// у нас меняется самый главный state, потом меняется поле counters и уже в нем меняется только каунтер который мы меняем
-const reducer = (state = initialState, action: Action): State => {
+const usersReducer = (state = initialUserState, action: Action): UserState => {
   switch (action.type) {
-    case 'increment': {
-      // деструктуризируем payload
-      const { counterId } = action.payload
-      const currentCounter = state.counters[counterId] ?? initialCounterState
-
-      return {
-        // копируем пред поля
-        ...state,
-        // дальше перезаписываем поле counters
-        counters: {
-          // в нем мы записываем старые каунтеры которые мы не изменили
-          // а меняем каунтер по id
-          ...state.counters,
-          [counterId]: {
-            // разворачиваем текущий каунтер и перезаписываем counter
-            ...currentCounter,
-            counter: currentCounter.counter + 1,
-          },
-        },
-      }
-    }
-
-    case 'decrement': {
-      // деструктуризируем payload
-      const { counterId } = action.payload
-      const currentCounter = state.counters[counterId] ?? initialCounterState
-
-      return {
-        // копируем пред поля
-        ...state,
-        // дальше перезаписываем поле counters
-        counters: {
-          // в нем мы записываем старые каунтеры которые мы не изменили
-          // а меняем каунтер по id
-          ...state.counters,
-          [counterId]: {
-            // разворачиваем текущий каунтер и перезаписываем counter
-            ...currentCounter,
-            counter: currentCounter.counter - 1,
-          },
-        },
-      }
-    }
-
     case 'usersStored': {
       const { users } = action.payload
 
       return {
-        // Записываем пред значение которое было в сторе
+        // копируем пред поля
         ...state,
-        // меняем users
-        users: {
-          // записываем пред значение users которое было в сторе
-          ...state.users,
-          // меняем поля entities
-          entities: users.reduce(
-            (acc, user) => {
-              acc[user.id] = user
-              return acc
-            },
-            {} as Record<UserId, User>,
-          ),
-          // прлучаем массив id
-          ids: users.map((user) => user.id),
-        },
+        // меняем поля entities
+        entities: users.reduce(
+          (acc, user) => {
+            acc[user.id] = user
+            return acc
+          },
+          {} as Record<UserId, User>,
+        ),
+        // прлучаем массив id
+        ids: users.map((user) => user.id),
       }
     }
 
@@ -172,28 +112,54 @@ const reducer = (state = initialState, action: Action): State => {
       const { userId } = action.payload
 
       return {
-        // Записываем пред значение которое было в сторе
+        // копируем пред поля
         ...state,
-        // меняем users
-        users: {
-          // записываем пред значение users которое было в сторе
-          ...state.users,
-          // меняем поле selectedUserId
-          selectedUserId: userId,
-        },
+        // меняем поле selectedUserId
+        selectedUserId: userId,
       }
     }
 
     case 'userRemoveSelected': {
       return {
-        // Записываем пред значение которое было в сторе
+        // копируем пред поля
         ...state,
-        // меняем users
-        users: {
-          // записываем пред значение users которое было в сторе
-          ...state.users,
-          // меняем поле selectedUserId
-          selectedUserId: undefined,
+        // меняем поле selectedUserId
+        selectedUserId: undefined,
+      }
+    }
+
+    default:
+      return state
+  }
+}
+const countersReducer = (state = initialCountersState, action: Action): CountersState => {
+  switch (action.type) {
+    case 'increment': {
+      // деструктуризируем payload
+      const { counterId } = action.payload
+      const currentCounter = state[counterId] ?? initialCounterState
+
+      return {
+        ...state,
+        [counterId]: {
+          // разворачиваем текущий каунтер и перезаписываем counter
+          ...currentCounter,
+          counter: currentCounter.counter + 1,
+        },
+      }
+    }
+
+    case 'decrement': {
+      // деструктуризируем payload
+      const { counterId } = action.payload
+      const currentCounter = state[counterId] ?? initialCounterState
+
+      return {
+        ...state,
+        [counterId]: {
+          // разворачиваем текущий каунтер и перезаписываем counter
+          ...currentCounter,
+          counter: currentCounter.counter - 1,
         },
       }
     }
@@ -202,6 +168,13 @@ const reducer = (state = initialState, action: Action): State => {
       return state
   }
 }
+
+// когда мы делаем изменения каунтера какие объекты у нас меняются ?
+// у нас меняется самый главный state, потом меняется поле counters и уже в нем меняется только каунтер который мы меняем
+const reducer = combineReducers({
+  users: usersReducer,
+  counters: countersReducer,
+})
 
 export const store = configureStore({
   reducer: reducer,
