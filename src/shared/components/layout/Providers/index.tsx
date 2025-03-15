@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { store } from '@/shared/store/counters'
+import { store } from '@/store/counters'
 
 import styles from './Providers.module.scss'
 import classNames from 'classnames/bind'

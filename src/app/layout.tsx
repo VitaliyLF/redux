@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 
-import Footer from '@/features/Footer'
-import Header from '@/features/Header/components'
+import Footer from '@/modules/Footer'
+import Header from '@/modules/Header/components'
 import favicon from '@/public/favicon.ico'
 import Providers from '@/shared/components/layout/Providers'
 import '@/styles/main.scss'

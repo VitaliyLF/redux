@@ -3,10 +3,10 @@
 import { useEffect, useReducer } from 'react'
 
 import Container from '@/shared/components/layout/Container'
-import { DecrementAction, IncrementAction, store } from '@/shared/store/counter'
+import { DecrementAction, IncrementAction, store } from '@/store/counter'
 
-import Counter from '../Counters'
-import UsersList from '../UsersList'
+import { Counters } from '../Counters'
+import { UsersList } from '../UsersList'
 import styles from './HeroSection.module.scss'
 import { IHeroSectionProps } from './type'
 import classNames from 'classnames/bind'
@@ -35,7 +35,6 @@ const HeroSection = ({ className }: IHeroSectionProps) => {
       <Container className={cx('hero__container')}>
         {/* для получения состояния используем store.getState().counter */}
         <p className={cx('hero__counter')}>Counter number:{store.getState().counter}</p>
-
         <div className={cx('hero__btns')}>
           {/* на клике по кнопке мы должны вызвать action */}
           <button
@@ -49,10 +48,7 @@ const HeroSection = ({ className }: IHeroSectionProps) => {
             decrement
           </button>
         </div>
-
-        <Counter counterId="first" />
-        <Counter counterId="second" />
-
+        <Counters />
         <UsersList />
       </Container>
     </section>
